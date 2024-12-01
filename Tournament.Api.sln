@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tournament.Api", "Tournament.Api\Tournament.Api.csproj", "{2312F5EF-9D5A-471E-A85E-D7921B6DDAEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tournament.Api", "Tournament.Api\Tournament.Api.csproj", "{2312F5EF-9D5A-471E-A85E-D7921B6DDAEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tournament.Core", "Tournament.Core\Tournament.Core.csproj", "{68B899AB-0885-4311-81FD-B7C092FCB1A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tournament.Data", "Tournament.Data\Tournament.Data.csproj", "{2FBF2040-45C2-4B95-AE4B-641B3A20B68F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{2312F5EF-9D5A-471E-A85E-D7921B6DDAEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2312F5EF-9D5A-471E-A85E-D7921B6DDAEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2312F5EF-9D5A-471E-A85E-D7921B6DDAEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68B899AB-0885-4311-81FD-B7C092FCB1A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68B899AB-0885-4311-81FD-B7C092FCB1A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68B899AB-0885-4311-81FD-B7C092FCB1A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68B899AB-0885-4311-81FD-B7C092FCB1A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FBF2040-45C2-4B95-AE4B-641B3A20B68F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FBF2040-45C2-4B95-AE4B-641B3A20B68F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FBF2040-45C2-4B95-AE4B-641B3A20B68F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FBF2040-45C2-4B95-AE4B-641B3A20B68F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
