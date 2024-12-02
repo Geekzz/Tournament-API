@@ -12,7 +12,7 @@ using Tournament.Data.Data;
 namespace Tournament.Data.Migrations
 {
     [DbContext(typeof(TournamentApiContext))]
-    [Migration("20241201161929_Init")]
+    [Migration("20241202124947_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -40,9 +40,6 @@ namespace Tournament.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TournamentDetailsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -73,13 +70,11 @@ namespace Tournament.Data.Migrations
 
             modelBuilder.Entity("Tournament.Core.Entities.Game", b =>
                 {
-                    b.HasOne("Tournament.Core.Entities.TournamentDetails", "TournamentDetails")
+                    b.HasOne("Tournament.Core.Entities.TournamentDetails", null)
                         .WithMany("Games")
                         .HasForeignKey("TournamentDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("TournamentDetails");
                 });
 
             modelBuilder.Entity("Tournament.Core.Entities.TournamentDetails", b =>

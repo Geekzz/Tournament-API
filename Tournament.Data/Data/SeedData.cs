@@ -34,14 +34,14 @@ namespace Tournament.Data.Data
                     StartDate = faker.Date.Future(),
                 };
 
-                tournament.Games = GenerateGames(faker.Random.Int(3, 10)); // Skapa mellan 3 och 10 matcher
+                tournament.Games = GenerateGames(faker.Random.Int(3, 10), tournament); // Skapa mellan 3 och 10 matcher
                 tournaments.Add(tournament);
             }
 
             return tournaments;
         }
 
-        private static ICollection<Game> GenerateGames(int count)
+        private static ICollection<Game> GenerateGames(int count, TournamentDetails tournamentDetails)
         {
             var faker = new Faker("sv");
 
@@ -49,6 +49,7 @@ namespace Tournament.Data.Data
             {
                 Title = faker.Company.CompanyName(),
                 Time = faker.Date.Future(),
+                TournamentDetailsId = tournamentDetails.Id
             }).ToList();
         }
     }

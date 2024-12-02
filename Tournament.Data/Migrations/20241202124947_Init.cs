@@ -33,7 +33,6 @@ namespace Tournament.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Time = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TournamentId = table.Column<int>(type: "int", nullable: false),
                     TournamentDetailsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

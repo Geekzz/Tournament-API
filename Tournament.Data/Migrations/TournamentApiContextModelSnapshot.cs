@@ -39,9 +39,6 @@ namespace Tournament.Data.Migrations
                     b.Property<int>("TournamentDetailsId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TournamentId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("TournamentDetailsId");
@@ -70,13 +67,11 @@ namespace Tournament.Data.Migrations
 
             modelBuilder.Entity("Tournament.Core.Entities.Game", b =>
                 {
-                    b.HasOne("Tournament.Core.Entities.TournamentDetails", "TournamentDetails")
+                    b.HasOne("Tournament.Core.Entities.TournamentDetails", null)
                         .WithMany("Games")
                         .HasForeignKey("TournamentDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("TournamentDetails");
                 });
 
             modelBuilder.Entity("Tournament.Core.Entities.TournamentDetails", b =>
