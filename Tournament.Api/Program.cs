@@ -27,6 +27,9 @@ namespace Tournament.Api
             // add UoW as service
             builder.Services.AddScoped<IUoW, UoW>();
 
+            // add mapping
+            builder.Services.AddAutoMapper(typeof(TournamentMappings));
+
             var app = builder.Build();
 
             // Seed some data

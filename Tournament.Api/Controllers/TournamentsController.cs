@@ -10,6 +10,8 @@ using Tournament.Core.Entities;
 using Tournament.Core.Repositories;
 using Tournament.Data.Repositories;
 using Bogus.DataSets;
+using AutoMapper;
+using Tournament.Core.Dto;
 
 namespace Tournament.Api.Controllers
 {
@@ -19,48 +21,32 @@ namespace Tournament.Api.Controllers
     {
         //private readonly TournamentApiContext _context;
         private readonly IUoW _uoW;
+        private readonly IMapper _mapper;
 
-        public TournamentsController(IUoW uoW)
+        public TournamentsController(IUoW uoW, IMapper mapper)
         {
             //_context = context;
             _uoW = uoW;
+            _mapper = mapper;
         }
 
         // GET: api/Tournaments
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TournamentDetails>>> GetTournament(bool includeGames)
         {
-            //var tournaments = await _context.Tournament
-            //    .Include(t => t.Games)
-            //    .Select(t => new
-            //    {
-            //        t.Id,
-            //        t.Title,
-            //        t.StartDate,
-            //        Games = t.Games.Select(g => new { g.Id, g.Title })
-            //    }).ToListAsync();
-            //return Ok(tournaments);
-            //return await _uoW.Tournament.ToListAsync();
-
             var tournaments = includeGames ? await _uoW.TournamentRepository.GetAllAsync() :
                 await _uoW.TournamentRepository.GetAllAsync(true);
-            return Ok(tournaments);
+            var tournamentDtos = _mapper.Map<IEnumerable<TournamentDto>>(tournaments);
+            return Ok(tournamentDtos);
         }
 
         // GET: api/Tournaments/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TournamentDetails>> GetTournament(int id)
         {
-            //var tournament = await _context.Tournament.FindAsync(id);
-
-            //if (tournament == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //return tournament;
             var tournament = await _uoW.TournamentRepository.GetAsync(id);
-            return Ok(tournament);
+            var tournamentDto = _mapper.Map<TournamentDto>(tournament);
+            return Ok(tournamentDto);
         }
 
         // PUT: api/Tournaments/5
@@ -80,27 +66,7 @@ namespace Tournament.Api.Controllers
             existingTournament.Games = tournament.Games;
 
             await _uoW.CompleteAsync();
-            return Ok(existingTournament);
-
-            //_context.Entry(tournament).State = EntityState.Modified;
-
-            //try
-            //{
-            //    await _context.SaveChangesAsync();
-            //}
-            //catch (DbUpdateConcurrencyException)
-            //{
-            //    if (!TournamentExists(id))
-            //    {
-            //        return NotFound();
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
-
-            //return NoContent();
+            return Ok(_mapper.Map<TournamentDto>(existingTournament));
         }
 
         // POST: api/Tournaments
@@ -108,36 +74,26 @@ namespace Tournament.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<TournamentDetails>> PostTournament(TournamentDetails tournament)
         {
-            //_context.Tournament.Add(tournament);
-            //await _context.SaveChangesAsync();
+            // Map the incoming TournamentDetails entity to the TournamentDetailsDto
+            var tournamentDto = _mapper.Map<TournamentDto>(tournament);
+            // Map TournamentDetails to the entity class before saving to the database
+            var tournamentEntity = _mapper.Map<TournamentDetails>(tournament);
 
-            //return CreatedAtAction("GetTournament", new { id = tournament.Id }, tournament);
-            _uoW.TournamentRepository.Add(tournament);
+            _uoW.TournamentRepository.Add(tournamentEntity);
             await _uoW.CompleteAsync();
-            //return Ok(tournament);
-            return CreatedAtAction(nameof(GetTournament), new { id = tournament.Id }, tournament);
+            return CreatedAtAction(nameof(GetTournament), new { id = tournamentEntity.Id }, tournamentDto);
         }
 
         // DELETE: api/Tournaments/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTournament(int id)
         {
-            //var tournament = await _context.Tournament.FindAsync(id);
-            //if (tournament == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //_context.Tournament.Remove(tournament);
-            //await _context.SaveChangesAsync();
-
-            //return NoContent();
             var tournament = await _uoW.TournamentRepository.GetAsync(id);
             if(tournament == null) { return NotFound(); };
 
             _uoW.TournamentRepository.Delete(tournament);
             await _uoW.CompleteAsync();
-            return Ok(tournament);
+            return Ok(_mapper.Map<TournamentDto>(tournament));
         }
 
         private async Task<bool> TournamentExists(int id)
