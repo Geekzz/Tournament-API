@@ -50,7 +50,7 @@ namespace Tournament.Api.Controllers
         }
 
         // GET: api/Games/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<Game>> GetGame(int id)
         {
             try
@@ -67,6 +67,27 @@ namespace Tournament.Api.Controllers
                 return StatusCode(500, "An error occurred while fetching the game.");
             }
         }
+
+        [HttpGet("{title}")]
+        public async Task<ActionResult<IEnumerable<GameDto>>> GetGamesByTitle(string title)
+        {
+            try
+            {
+                var games = await _uoW.GameRepository.GetByTitleAsync(title);
+
+                if (!games.Any())
+                    return NotFound($"No games found with the title '{title}'.");
+
+                var gamesDtos = _mapper.Map<IEnumerable<GameDto>>(games);
+                return Ok(gamesDtos);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while fetching games.");
+            }
+        }
+
+
 
         // PUT: api/Games/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
