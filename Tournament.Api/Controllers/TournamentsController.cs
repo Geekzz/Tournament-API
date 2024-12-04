@@ -12,6 +12,7 @@ using Tournament.Data.Repositories;
 using Bogus.DataSets;
 using AutoMapper;
 using Tournament.Core.Dto;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Tournament.Api.Controllers
 {
@@ -34,10 +35,18 @@ namespace Tournament.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TournamentDetails>>> GetTournament(bool includeGames)
         {
-            var tournaments = includeGames ? await _uoW.TournamentRepository.GetAllAsync() :
-                await _uoW.TournamentRepository.GetAllAsync(true);
-            var tournamentDtos = _mapper.Map<IEnumerable<TournamentDto>>(tournaments);
-            return Ok(tournamentDtos);
+            try
+            {
+                var tournaments = includeGames ? await _uoW.TournamentRepository.GetAllAsync() :
+                    await _uoW.TournamentRepository.GetAllAsync(true);
+
+                var tournamentDtos = _mapper.Map<IEnumerable<TournamentDto>>(tournaments);
+                return Ok(tournamentDtos);
+            }
+            catch
+            {
+                return StatusCode(500, "Failed to retrieve tournaments from the database.");
+            }
         }
 
         // GET: api/Tournaments/5
@@ -45,6 +54,8 @@ namespace Tournament.Api.Controllers
         public async Task<ActionResult<TournamentDetails>> GetTournament(int id)
         {
             var tournament = await _uoW.TournamentRepository.GetAsync(id);
+            if (tournament == null)
+                return NotFound();
             var tournamentDto = _mapper.Map<TournamentDto>(tournament);
             return Ok(tournamentDto);
         }
@@ -54,19 +65,28 @@ namespace Tournament.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTournament(int id, TournamentDetails tournament)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             if (id != tournament.Id)
-            {
                 return BadRequest();
-            }
 
             var existingTournament = await _uoW.TournamentRepository.GetAsync(id);
-            if (existingTournament == null) { return NotFound(); }
+            if (existingTournament == null)
+                return NotFound();
+
             existingTournament.Title = tournament.Title;
             existingTournament.StartDate = tournament.StartDate;
             existingTournament.Games = tournament.Games;
 
-            await _uoW.CompleteAsync();
-            return Ok(_mapper.Map<TournamentDto>(existingTournament));
+            try
+            {
+                await _uoW.CompleteAsync();
+                return Ok(_mapper.Map<TournamentDto>(existingTournament));
+            }
+            catch
+            {
+                return StatusCode(500, "Failed to save the tournament to the database.");
+            }
         }
 
         // POST: api/Tournaments
@@ -74,13 +94,22 @@ namespace Tournament.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<TournamentDetails>> PostTournament(TournamentDetails tournament)
         {
-            // Map the incoming TournamentDetails entity to the TournamentDetailsDto
-            var tournamentDto = _mapper.Map<TournamentDto>(tournament);
-            // Map TournamentDetails to the entity class before saving to the database
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var tournamentEntity = _mapper.Map<TournamentDetails>(tournament);
 
-            _uoW.TournamentRepository.Add(tournamentEntity);
-            await _uoW.CompleteAsync();
+            try
+            {
+                _uoW.TournamentRepository.Add(tournamentEntity);
+                await _uoW.CompleteAsync();
+            }
+            catch
+            {
+                return StatusCode(500, "Failed to save the tournament to the database.");
+            }
+
+            var tournamentDto = _mapper.Map<TournamentDto>(tournamentEntity);
             return CreatedAtAction(nameof(GetTournament), new { id = tournamentEntity.Id }, tournamentDto);
         }
 
@@ -89,17 +118,49 @@ namespace Tournament.Api.Controllers
         public async Task<IActionResult> DeleteTournament(int id)
         {
             var tournament = await _uoW.TournamentRepository.GetAsync(id);
-            if(tournament == null) { return NotFound(); };
+            if (tournament == null)
+                return NotFound();
 
-            _uoW.TournamentRepository.Delete(tournament);
-            await _uoW.CompleteAsync();
-            return Ok(_mapper.Map<TournamentDto>(tournament));
+            try
+            {
+                _uoW.TournamentRepository.Delete(tournament);
+                await _uoW.CompleteAsync();
+                return Ok(_mapper.Map<TournamentDto>(tournament));
+            }
+            catch
+            {
+                return StatusCode(500, "Failed to delete the tournament from the database.");
+            }
         }
 
         private async Task<bool> TournamentExists(int id)
         {
             //return _context.Tournament.Any(e => e.Id == id);
             return await _uoW.TournamentRepository.AnyAsync(id);
+        }
+
+        [HttpPatch("{tournamentId}")]
+        public async Task<ActionResult<TournamentDto>> PatchTournament(int tournamentId,
+            JsonPatchDocument<TournamentDto> jsonPatchDocument)
+        {
+            if (jsonPatchDocument == null)
+                return BadRequest("Patch document is null.");
+
+            var tournament = await _uoW.TournamentRepository.GetAsync(tournamentId);
+            if (tournament == null)
+                return NotFound();
+
+            var tournamentDto = _mapper.Map<TournamentDto>(tournament);
+
+            jsonPatchDocument.ApplyTo(tournamentDto, ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            _mapper.Map(tournamentDto, tournament);
+            await _uoW.CompleteAsync();
+
+            return Ok(tournamentDto);
         }
     }
 }

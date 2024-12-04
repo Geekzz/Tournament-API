@@ -17,11 +17,11 @@ namespace Tournament.Data.Data
             CreateMap<TournamentDetails, TournamentDto>()
                 .ForMember(dest => dest.StartDate,
                            opt => opt.MapFrom(src => src.StartDate.ToString("yyyy-MM-dd")))
-                .ForMember(dest => dest.Titel, opt => opt.MapFrom(src => src.Title.Trim()));  // Custom formatting for start date
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title.Trim()));  // Custom formatting for start date
 
             // Mapping Game to GameDto, adding custom logic if needed
             CreateMap<Game, GameDto>()
-                .ForMember(dest => dest.Titel, opt => opt.MapFrom(src => src.Title.Trim()));  // Trim whitespace if needed
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title.Trim()));  // Trim whitespace if needed
 
             // Mapping for reverse (e.g., creating new tournament from DTO)
             CreateMap<TournamentDto, TournamentDetails>();
