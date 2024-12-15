@@ -26,15 +26,15 @@ namespace Tournament.Data.Data
             var faker = new Faker("sv");
             var tournaments = new List<TournamentDetails>();
 
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 var tournament = new TournamentDetails
                 {
-                    Title = faker.Company.CompanyName(),
+                    Title = Truncate(faker.Company.CompanyName(), 30), // Truncate to 30 characters
                     StartDate = faker.Date.Future(),
                 };
 
-                tournament.Games = GenerateGames(faker.Random.Int(3, 10), tournament); // Skapa mellan 3 och 10 matcher
+                tournament.Games = GenerateGames(faker.Random.Int(3, 10), tournament); // Generate between 3 and 10 games
                 tournaments.Add(tournament);
             }
 
@@ -47,10 +47,16 @@ namespace Tournament.Data.Data
 
             return Enumerable.Range(1, count).Select(_ => new Game
             {
-                Title = faker.Company.CompanyName(),
-                Time = faker.Date.Future(),
+                Title = Truncate(faker.Company.CompanyName(), 30), // Truncate to 30 characters
+                StartTime = faker.Date.Future(),
                 TournamentDetailsId = tournamentDetails.Id
             }).ToList();
         }
+
+        private static string Truncate(string value, int maxLength)
+        {
+            return string.IsNullOrEmpty(value) ? value : value.Length <= maxLength ? value : value.Substring(0, maxLength);
+        }
+
     }
 }

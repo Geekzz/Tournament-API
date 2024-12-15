@@ -11,5 +11,6 @@ namespace Tournament.Core.Dto
         public int Id { get; init; }
         public string? Title {  get; init; }
         public DateTime StartDate { get; init; }
+        public int TournamentDetailsId { get; init; } // Add this to capture the FK
     }
 }

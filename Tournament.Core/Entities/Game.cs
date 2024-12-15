@@ -14,7 +14,7 @@ namespace Tournament.Core.Entities
         [StringLength(30, MinimumLength = 2, ErrorMessage = "The title must be between 2 and 30 characters long.")]
         public string? Title { get; set; }
         [Required]
-        public DateTime Time { get; set; }
+        public DateTime StartTime { get; set; }
         public int TournamentDetailsId { get; set; }
     }
 }

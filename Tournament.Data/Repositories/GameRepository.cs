@@ -51,5 +51,12 @@ namespace Tournament.Data.Repositories
         {
             _context.Games.Remove(tour);
         }
+
+        public async Task<int> CountByTournamentIdAsync(int id)
+        {
+            return await _context.Set<Game>()
+                .Where(g => g.TournamentDetailsId == id)
+                .CountAsync();
+        }
     }
 }

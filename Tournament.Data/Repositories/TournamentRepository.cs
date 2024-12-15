@@ -45,5 +45,26 @@ namespace Tournament.Data.Repositories
         {
             _context.Tournament.Remove(tour);
         }
+
+        public async Task<double> CountAsync()
+        {
+            return await _context.Set<TournamentDetails>().CountAsync();
+        }
+
+        public async Task<List<TournamentDetails>> GetPagedAsync(int page, int pageSize, bool includeGames = false)
+        {
+            IQueryable<TournamentDetails> query = _context.Set<TournamentDetails>();
+
+            if (includeGames)
+            {
+                query = query.Include(t => t.Games); // Assuming the navigation property is named 'Games'
+            }
+
+            return await query
+                .OrderBy(t => t.Id) // Optional: Apply ordering
+                .Skip((page - 1) * pageSize) // Skip records for previous pages
+                .Take(pageSize)             // Take only the records for the current page
+                .ToListAsync();
+        }
     }
 }

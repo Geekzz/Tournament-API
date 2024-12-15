@@ -15,5 +15,7 @@ namespace Tournament.Core.Repositories
         public void Add(TournamentDetails tour);
         public void Update(TournamentDetails tour);
         public void Delete(TournamentDetails tour);
+        Task<double> CountAsync();
+        Task<List<TournamentDetails>> GetPagedAsync(int page, int pageSize, bool includeGames);
     }
 }

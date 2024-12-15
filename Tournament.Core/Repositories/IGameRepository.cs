@@ -13,6 +13,7 @@ namespace Tournament.Core.Repositories
         public Task<IEnumerable<Game>> GetByTitleAsync(string title);
         public Task<Game?> GetAsync(int id);
         public Task<bool> AnyAsync(int id);
+        public Task<int> CountByTournamentIdAsync(int id);
         public void Add(Game tour);
         public void Update(Game tour);
         public void Delete(Game tour);
